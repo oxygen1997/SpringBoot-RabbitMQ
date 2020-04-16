@@ -7,6 +7,9 @@ import java.util.UUID;
 
 public class RabbitMessage {
 
+    public static String SUCCESS_TIPS = "send success by ";
+    public static String FAIL_TIPS = "send failed by ";
+
     //exchange name
     public static String DIRECT_EXCHANGE="DirectExchange";
     public static String TOPIC_EXCHANGE="TopicExchange";

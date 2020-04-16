@@ -67,7 +67,7 @@ public class BeanConfig {
         return BindingBuilder.bind(queue2).to(topicExchange).with(RabbitMessage.ROUTINGKEY_TOPIC1);
     }
     /*
-        将队列和交换机建立关系，q2队列和topicExchange绑定路由键k2，形参q2要和声明队列的方法名一样，Spring自动注入功能
+        将队列和交换机建立关系，q3队列和topicExchange绑定路由键k2，形参q3要和声明队列的方法名一样，Spring自动注入功能
      */
     @Bean
     public Binding bingTopicExchange2(Queue queue3,TopicExchange topicExchange){
@@ -101,7 +101,7 @@ public class BeanConfig {
     }
 
     /*
-        将队列和交换机建立关系，q3队列和fanoutExchange绑定，形参q3要和声明队列的方法名一样，Spring自动注入功能
+        将队列和交换机建立关系，q3队列和fanoutExchange绑定，形参q4要和声明队列的方法名一样，Spring自动注入功能
      */
     @Bean
     public Binding bingFanoutExchange1(Queue queue4,FanoutExchange fanoutExchange){
@@ -109,8 +109,8 @@ public class BeanConfig {
     }
 
     /*
-      将队列和交换机建立关系，q4队列和fanoutExchange绑定，形参q3要和声明队列的方法名一样，Spring自动注入功能
-   */
+      将队列和交换机建立关系，q4队列和fanoutExchange绑定，形参q5要和声明队列的方法名一样，Spring自动注入功能
+	*/
     @Bean
     public Binding bingFanoutExchange2(Queue queue5,FanoutExchange fanoutExchange){
         return BindingBuilder.bind(queue5).to(fanoutExchange);

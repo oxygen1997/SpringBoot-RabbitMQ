@@ -15,8 +15,9 @@ public class MessageController {
   
     private String sendStatus;
 
+
     @Autowired
-    RabbitTemplate rabbitTemplate;
+    private RabbitTemplate rabbitTemplate;
 
     @GetMapping("/direct")
     public String sendDirectMessage() {
@@ -24,11 +25,11 @@ public class MessageController {
         try{
             SendUtil sendUtil = new SendUtil();
             sendUtil.send(rabbitTemplate,RabbitMessage.DIRECT_EXCHANGE,RabbitMessage.ROUTINGKEY_DIRECT);
-            sendStatus="send by "+RabbitMessage.DIRECT_EXCHANGE+" success";
+            sendStatus=RabbitMessage.SUCCESS_TIPS+RabbitMessage.DIRECT_EXCHANGE;
             System.out.println(sendStatus);
         }catch (Exception e){
             e.printStackTrace();
-            sendStatus="send by "+RabbitMessage.DIRECT_EXCHANGE+" fail 呜呜";
+            sendStatus=RabbitMessage.FAIL_TIPS+RabbitMessage.DIRECT_EXCHANGE;
             System.out.println(sendStatus);
         }
         return sendStatus;
@@ -44,19 +45,20 @@ public class MessageController {
             //key=one.k2.topic.a.b bind q3.topic--->*.k2.#    #匹配0个或多个，*匹配一个
             SendUtil sendUtil = new SendUtil();
             sendUtil.send(rabbitTemplate,RabbitMessage.TOPIC_EXCHANGE,routingKey1);
-            System.out.println("send one msg by "+RabbitMessage.TOPIC_EXCHANGE+" success...");
+            System.out.println(RabbitMessage.SUCCESS_TIPS+RabbitMessage.TOPIC_EXCHANGE+" first msg...");
 
-            System.out.println("...睡眠1s......");
+            System.out.println("... pause 1 s ......");
             Thread.sleep(1000);
 
             //key=c.d.e.k2.topic bind q2.topic--->#.k2.*   #匹配0个或多个，*匹配一个
             sendUtil.send(rabbitTemplate,RabbitMessage.TOPIC_EXCHANGE,routingKey2);
 
-            sendStatus= "send two msg by "+RabbitMessage.TOPIC_EXCHANGE+" success...";
+            sendStatus= RabbitMessage.SUCCESS_TIPS+RabbitMessage.TOPIC_EXCHANGE+" second msg...";
             System.out.println(sendStatus);
+
         }catch (Exception e){
             e.printStackTrace();
-            sendStatus="send by "+RabbitMessage.TOPIC_EXCHANGE+" 呜呜";
+            sendStatus=RabbitMessage.FAIL_TIPS+RabbitMessage.TOPIC_EXCHANGE;
             System.out.println(sendStatus);
         }
         return sendStatus;
@@ -69,11 +71,11 @@ public class MessageController {
         try{
             SendUtil sendUtil = new SendUtil();
             sendUtil.send(rabbitTemplate,RabbitMessage.FANOUT_EXCHANGE,null);
-            sendStatus= "send by "+RabbitMessage.FANOUT_EXCHANGE+" success";
+            sendStatus= RabbitMessage.SUCCESS_TIPS+RabbitMessage.FANOUT_EXCHANGE;
             System.out.println(sendStatus);
         }catch (Exception e){
             e.printStackTrace();
-            sendStatus="send by "+RabbitMessage.FANOUT_EXCHANGE+" 呜呜";
+            sendStatus=RabbitMessage.FAIL_TIPS+RabbitMessage.FANOUT_EXCHANGE;
             System.out.println(sendStatus);
         }
         return sendStatus;
