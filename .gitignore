@@ -1,3 +1,4 @@
+# ignore ide files
 .idea
 .gitignore
 .idea/workspace.xml
