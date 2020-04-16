@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SendUtil {
 
+
     public void send(RabbitTemplate rabbitTemplate,String exchangeType,String routingKey){
 
         String createTime = RabbitMessage.getNowTime();
