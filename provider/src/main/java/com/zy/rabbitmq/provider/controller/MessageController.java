@@ -1,45 +1,81 @@
 package com.zy.rabbitmq.provider.controller;
 
+import com.zy.rabbitmq.provider.config.RabbitMessage;
+import com.zy.rabbitmq.provider.util.SendUtil;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+
 
 @RestController
 public class MessageController {
 
-
+  
+    private String sendStatus;
 
     @Autowired
-    RabbitTemplate rabbitTemplate;  //使用RabbitTemplate,这提供了接收/发送等等方法
+    RabbitTemplate rabbitTemplate;
 
-    @GetMapping("/sendDirectMessage")
+    @GetMapping("/direct")
     public String sendDirectMessage() {
 
-        String sendStatus="";
-
         try{
-            String messageId = String.valueOf(UUID.randomUUID());
-            String messageData = "This message send by Direct Exchange ,send time ：｛ "+LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))+" ｝";
-            String createTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            Map<String,Object> map=new HashMap<>();
-            map.put("messageId",messageId);
-            map.put("messageData",messageData);
-            map.put("createTime",createTime);
-            //将消息携带绑定键值：TestDirectRouting 发送到交换机TestDirectExchange
-            rabbitTemplate.convertAndSend("directExchange", "k3", map);
-            sendStatus= "send success";
+            SendUtil sendUtil = new SendUtil();
+            sendUtil.send(rabbitTemplate,RabbitMessage.DIRECT_EXCHANGE,RabbitMessage.ROUTINGKEY_DIRECT);
+            sendStatus="send by "+RabbitMessage.DIRECT_EXCHANGE+" success";
+            System.out.println(sendStatus);
         }catch (Exception e){
             e.printStackTrace();
-            sendStatus="send fail 呜呜";
+            sendStatus="send by "+RabbitMessage.DIRECT_EXCHANGE+" fail 呜呜";
+            System.out.println(sendStatus);
         }
+        return sendStatus;
+    }
 
+    @GetMapping("/topic")
+    public String sendTopicMessage() {
+
+        String routingKey1 = "one.k2.topic.a.b";
+        String routingKey2 = "topic.c.d.k2.one";
+
+        try{
+            //key=one.k2.topic.a.b bind q3.topic--->*.k2.#    #匹配0个或多个，*匹配一个
+            SendUtil sendUtil = new SendUtil();
+            sendUtil.send(rabbitTemplate,RabbitMessage.TOPIC_EXCHANGE,routingKey1);
+            System.out.println("send one msg by "+RabbitMessage.TOPIC_EXCHANGE+" success...");
+
+            System.out.println("...睡眠1s......");
+            Thread.sleep(1000);
+
+            //key=c.d.e.k2.topic bind q2.topic--->#.k2.*   #匹配0个或多个，*匹配一个
+            sendUtil.send(rabbitTemplate,RabbitMessage.TOPIC_EXCHANGE,routingKey2);
+
+            sendStatus= "send two msg by "+RabbitMessage.TOPIC_EXCHANGE+" success...";
+            System.out.println(sendStatus);
+        }catch (Exception e){
+            e.printStackTrace();
+            sendStatus="send by "+RabbitMessage.TOPIC_EXCHANGE+" 呜呜";
+            System.out.println(sendStatus);
+        }
+        return sendStatus;
+    }
+
+
+    @GetMapping("/fanout")
+    public String sendFanoutMessage() {
+
+        try{
+            SendUtil sendUtil = new SendUtil();
+            sendUtil.send(rabbitTemplate,RabbitMessage.FANOUT_EXCHANGE,null);
+            sendStatus= "send by "+RabbitMessage.FANOUT_EXCHANGE+" success";
+            System.out.println(sendStatus);
+        }catch (Exception e){
+            e.printStackTrace();
+            sendStatus="send by "+RabbitMessage.FANOUT_EXCHANGE+" 呜呜";
+            System.out.println(sendStatus);
+        }
         return sendStatus;
     }
 
